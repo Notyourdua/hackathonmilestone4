@@ -1,87 +1,79 @@
-document.getElementById('resumeForm')?.addEventListener('submit', function(event) {
-    event.preventDefault();
 
-    // Get references to form elements using their IDs
+//category products
 
-    const nameElement = document.getElementById('name');
-    const emailElement = document.getElementById('email');
-    const phoneElement = document.getElementById('phone');
-    const addressElement = document.getElementById('address');
-    const educationElement = document.getElementById('education');
-    const experienceElement = document.getElementById('experience');
-    const skillsElement = document.getElementById('skills');
+function filterCategory(category) {
+    const products = document.querySelectorAll('.product');
+    products.forEach(product => {
+      if (category === 'All' || product.getAttribute('data-category') === category) {
+        product.style.display = 'block';
+      } else {
+        product.style.display = 'none';
+      }
+    });
+  }
+//cart
+let cart = [];
 
-    if  (nameElement && emailElement && phoneElement && addressElement && educationElement && experienceElement && skillsElement) {
+function addToCart(name, price) {
+    cart.push({ name, price });
+    updateCart();
+}
+function updateCart() {
+    const cartItemsDiv = document.getElementById('cart-items');
+    const totalP = document.getElementById('total');
+    cartItemsDiv.innerHTML = '';
 
-        const name = (nameElement as HTMLInputElement).value;
-        const email = (emailElement as HTMLInputElement).value;
-        const phone = (phoneElement as HTMLInputElement).value;
-        const address = (addressElement as HTMLInputElement).value;
-        const education = (educationElement as HTMLInputElement).value;
-        const experience = (experienceElement as HTMLInputElement).value;
-        const skills = (skillsElement as HTMLInputElement).value;
+    let total = 0;
+    cart.forEach(item => {
+        const itemDiv = document.createElement('div');
+        itemDiv.classList.add('cart-item');
 
+        // Display item name and price
+        itemDiv.innerHTML = `<span>${item.name}</span><span>$${item.price.toFixed(2)}</span>`;
+        cartItemsDiv.appendChild(itemDiv);
 
-        // Create resume output
-        const resumeOutput = `
-        <h2>Resume</h2>
-        <p><strong>Name:</strong> <span id="edit-name" class="editable"> ${name} </span> </p>
-        <p><strong>Email:</strong> <span id="edit-edit" class="editable"> ${email} </span> </p>
-        <p><strong>Phone Number:</strong> <span id="edit-phone" class="editable"> ${phone}</p>
-        <p><strong>Address:</strong> <span id="edit-address" class="editable"> ${address}</span> </p>
+        total += item.price;
+    });
 
-        <h3>Education</h3>
-        <p> <span id="edit-education" class="editable"> ${education}</p>
+    totalP.textContent = `Total: $${total.toFixed(2)}`;
+}
 
-        <h3>Work Experience</h3>
-        <p><span id="edit-experience" class="editable"> ${experience}</p>
+function simulateAddToCart() {
+    addToCart('Product 1', 19.99);
+    addToCart('Product 2', 29.99);
+    addToCart('Product 3', 39.99);
+}
+simulateAddToCart();
 
-        <h3>Skills</h3>
-        <p><span id="edit-skills" class="editable"> ${skills}</p>
-        `;
+// Reviews 
+let reviews = [];
 
-        // Display the resume output
-        const resumeOutputElement = document.getElementById('resumeOutput');
-        if (resumeOutputElement) {
-            resumeOutputElement.innerHTML = resumeOutput;
-        makeEditable();
-        }
-    } else {
-        console.error('One or more form elements are missing');
+function addReview() {
+    const reviewInput = document.getElementById('review-input');
+    const reviewList = document.getElementById('review-list');
+
+    if (reviewInput.value) {
+        reviews.push(reviewInput.value);
+        reviewList.innerHTML = '';
+        reviews.forEach((review) => {
+            const reviewItem = document.createElement('p');
+            reviewItem.textContent = review;
+            reviewList.appendChild(reviewItem);
+        });
+        reviewInput.value = '';
     }
-});
+}
 
-function makeEditable(){
-    const editableElements = document.querySelectorAll('.editable');
-    editableElements.forEach(element => {
-        element.addEventListener('click' , function() {
-            const currentElement = element as HTMLElement;
-            const currentValue = currentElement.textContent || "" ;
+function authenticate() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const authMessage = document.getElementById('auth-message');
 
-            //replace content
-            if(currentElement.tagName === "P" || currentElement.tagName === 'SPAN') {
-                const input = document.createElement('input')
-                input.type = 'text'
-                input.value = currentValue
-                input.classList.add('editing-input')
-
-                input.addEventListener('blur', function (){
-                    currentElement.textContent = input.value;
-                    currentElement.style.display = 'inline'
-                    input.remove()
-
-                })
-
-
-
-
-
-
-                currentElement.style.display = 'none'
-                currentElement.parentNode?.insertBefore(input, currentElement)
-                input.focus()
-            }
-
-        })
-    })
+    if (username === 'user' && password === 'pass') {
+        authMessage.textContent = 'Login successful!';
+        authMessage.style.color = 'green';
+    } else {
+        authMessage.textContent = 'Invalid username or password.';
+        authMessage.style.color = 'red';
+    }
 }
